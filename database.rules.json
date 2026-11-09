@@ -1,0 +1,64 @@
+{
+  "rules": {
+    "smarthome": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('disabled').val() !== true",
+
+      "live": {
+        ".write": "auth != null && auth.token.email === 'esp32@smarthome.com'"
+      },
+
+      "events": {
+        ".write": "auth != null"
+      },
+
+      "controls": {
+        "$device": {
+          ".write": "auth != null && root.child('users').child(auth.uid).child('disabled').val() !== true && (root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('smarthome/locks').child($device).val() !== true)",
+          ".validate": "($device === 'lightMode' || $device === 'fanMode') && (newData.val() === 'auto' || newData.val() === 'on' || newData.val() === 'off')"
+        }
+      },
+
+      "locks": {
+        "$device": {
+          ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+          ".validate": "newData.isBoolean()"
+        }
+      },
+
+      "changes": {
+        "$device": {
+          ".write": "auth != null && root.child('users').child(auth.uid).child('disabled').val() !== true && (root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('smarthome/locks').child($device).val() !== true)",
+          ".validate": "newData.child('uid').val() === auth.uid"
+        }
+      }
+    },
+
+    "users": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && !data.exists()",
+        "role": {
+          ".validate": "false"
+        },
+        "online": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.isBoolean()"
+        },
+        "lastLogin": {
+          ".write": "auth != null && auth.uid === $uid"
+        },
+        "disabled": {
+          ".write": "auth != null && auth.uid !== $uid && root.child('users').child(auth.uid).child('role').val() === 'admin' && data.parent().child('role').val() !== 'admin' && data.parent().child('email').val() !== 'esp32@smarthome.com'",
+          ".validate": "newData.isBoolean()"
+        },
+        "disabledBy": {
+          ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
+        },
+        "disabledAt": {
+          ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
+        }
+      }
+    }
+  }
+}

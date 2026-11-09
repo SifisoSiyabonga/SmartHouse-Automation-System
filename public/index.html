@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Home - Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<div class="auth-wrap">
+  <form class="auth-card" id="loginForm">
+    <div class="logo">&#127968;</div>
+    <h1>Smart Home</h1>
+    <div class="sub">Log in to your dashboard</div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="Your password" autocomplete="current-password" required>
+    </div>
+
+    <button class="btn" id="loginBtn" type="submit">Log in</button>
+    <div class="msg" id="msg"></div>
+
+    <div class="switch"><button type="button" class="link-btn" id="forgot">Forgot password?</button></div>
+    <div class="switch">No account yet? <a href="register.html">Register</a></div>
+  </form>
+</div>
+
+<script type="module">
+import { auth, niceError } from "./firebase-config.js";
+import { signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const $ = id => document.getElementById(id);
+const show = (text, ok) => { $('msg').textContent = text; $('msg').className = 'msg ' + (ok ? 'ok' : 'err'); };
+
+// Already logged in? Go straight to the dashboard
+onAuthStateChanged(auth, user => { if (user) location.href = 'dashboard.html'; });
+
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('loginBtn').disabled = true; $('loginBtn').textContent = 'Logging in...';
+  try {
+    await signInWithEmailAndPassword(auth, $('email').value.trim(), $('password').value);
+    location.href = 'dashboard.html';
+  } catch (err) {
+    show(niceError(err), false);
+    $('loginBtn').disabled = false; $('loginBtn').textContent = 'Log in';
+  }
+});
+
+$('forgot').addEventListener('click', async () => {
+  const email = $('email').value.trim();
+  if (!email) { show('Type your email first, then click "Forgot password?".', false); return; }
+  try { await sendPasswordResetEmail(auth, email); show('Reset link sent. Check your email.', true); }
+  catch (err) { show(niceError(err), false); }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sibanyoni Smart Home - Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div id="overlay"></div>
+<div id="alarm">&#9888; SMOKE / GAS DETECTED! &#9888;</div>
+
+<div class="topbar">
+  <span id="who">Checking login...</span>
+  <button class="logout" id="usersBtn" style="display:none">&#128101; Users</button>
+  <button class="logout" id="logout">Log out</button>
+</div>
+
+<div id="usersPanel">
+  <div class="uhead">
+    <div><b>&#128101; Users</b> <span class="small" id="ucount">Loading...</span></div>
+    <button class="logout" id="usersClose">Close</button>
+  </div>
+  <div id="ulist"></div>
+  <div class="small" style="margin-top:8px">&#128994; = online now. Sorted by the most recent login.</div>
+</div>
+
+<header>
+  <h1 class="title-main">Sibanyoni Smart Home</h1>
+  <div class="sub"><span class="dot off" id="dot"></span><span id="status">Waiting for ESP32...</span></div>
+</header>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="title">Temperature</div>
+    <div class="gauge">
+      <svg width="150" height="150">
+        <defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#74b9ff"/><stop offset="1" stop-color="#fd79a8"/>
+        </linearGradient></defs>
+        <circle class="bgc" cx="75" cy="75" r="60"/>
+        <circle id="tring" cx="75" cy="75" r="60"/>
+      </svg>
+      <div class="gval"><b id="temp">--</b><span>°C</span></div>
+    </div>
+    <div class="hum"><span class="drop">&#128167;</span> Humidity <b id="hum">--</b></div>
+    <div class="small" id="tinfo">--</div>
+  </div>
+
+  <div class="card">
+    <div class="title">Smoke / Gas</div>
+    <div class="big wait" id="gstate">--</div>
+    <div class="small">MQ-2 reading: <b id="gas">--</b> / 4095</div>
+    <div class="meter"><div id="gfill"></div></div>
+    <div class="small" id="ginfo" style="margin-top:10px">--</div>
+  </div>
+
+  <div class="card">
+    <div class="title">Motion (PIR)</div>
+    <div class="radar" id="radar">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div class="core">&#128694;</div>
+    </div>
+    <div class="big wait" id="mstate">--</div>
+    <div class="holdtxt" id="mhold"></div>
+    <div class="meter"><div id="mfill"></div></div>
+    <div class="small" id="minfo" style="margin-top:10px">--</div>
+    <div class="small" id="mcount">--</div>
+  </div>
+
+  <div class="card">
+    <div class="title">Motion Light (LED)</div>
+    <div class="bulb" id="bulb"></div>
+    <div class="big wait" id="lstate">--</div><br>
+    <div class="seg">
+      <button id="lA">AUTO</button>
+      <button id="lOn">ON</button>
+      <button id="lOff">OFF</button>
+    </div>
+    <div class="small" id="lmode" style="margin-top:8px">--</div>
+    <div class="small changed" id="lby"></div>
+    <button class="lockbtn" id="lLock" style="display:none">&#128275; Lock</button>
+  </div>
+
+  <div class="card">
+    <div class="title">Fan (Relay)</div>
+    <svg class="fan" id="fanimg" viewBox="0 0 100 100">
+      <g class="bl">
+        <ellipse cx="50" cy="27" rx="11" ry="22"/>
+        <ellipse cx="50" cy="27" rx="11" ry="22" transform="rotate(120 50 50)"/>
+        <ellipse cx="50" cy="27" rx="11" ry="22" transform="rotate(240 50 50)"/>
+      </g>
+      <circle cx="50" cy="50" r="9" fill="#dfe6e9"/>
+    </svg>
+    <div class="big wait" id="fstate">--</div><br>
+    <div class="seg">
+      <button id="fA">AUTO</button>
+      <button id="fOn">ON</button>
+      <button id="fOff">OFF</button>
+    </div>
+    <div class="small" id="fmode" style="margin-top:8px">--</div>
+    <div class="small changed" id="fby"></div>
+    <button class="lockbtn" id="fLock" style="display:none">&#128275; Lock</button>
+  </div>
+
+</div>
+<footer>PJD 301B &middot; IoT Smart Home &middot; ESP32 + Firebase</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

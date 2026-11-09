@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Home - Register</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<div class="auth-wrap">
+  <form class="auth-card" id="regForm">
+    <div class="logo">&#127968;</div>
+    <h1>Create account</h1>
+    <div class="sub">Register to control your Smart Home</div>
+
+    <div class="field">
+      <label for="name">Full name</label>
+      <input id="name" type="text" placeholder="Your name" autocomplete="name" required>
+    </div>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+    </div>
+    <div class="field">
+      <label for="password">Password (at least 6 characters)</label>
+      <input id="password" type="password" placeholder="Choose a password" autocomplete="new-password" required>
+    </div>
+    <div class="field">
+      <label for="confirm">Confirm password</label>
+      <input id="confirm" type="password" placeholder="Type it again" autocomplete="new-password" required>
+    </div>
+
+    <button class="btn" id="regBtn" type="submit">Register</button>
+    <div class="msg" id="msg"></div>
+
+    <div class="switch">Already have an account? <a href="index.html">Log in</a></div>
+  </form>
+</div>
+
+<script type="module">
+import { auth, db, niceError } from "./firebase-config.js";
+import { createUserWithEmailAndPassword, updateProfile }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { ref, set, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const $ = id => document.getElementById(id);
+const show = (text, ok) => { $('msg').textContent = text; $('msg').className = 'msg ' + (ok ? 'ok' : 'err'); };
+
+$('regForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = $('name').value.trim(), email = $('email').value.trim();
+  const pw = $('password').value, pw2 = $('confirm').value;
+  if (!name) { show('Please enter your name.', false); return; }
+  if (pw.length < 6) { show('Password must be at least 6 characters.', false); return; }
+  if (pw !== pw2) { show('The two passwords do not match.', false); return; }
+
+  $('regBtn').disabled = true; $('regBtn').textContent = 'Creating account...';
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pw);
+    await updateProfile(cred.user, { displayName: name });
+    // Save a small profile in the database (users/<uid>)
+    await set(ref(db, 'users/' + cred.user.uid), { name: name, email: email, created: serverTimestamp() });
+    show('Account created! Opening your dashboard...', true);
+    setTimeout(() => location.href = 'dashboard.html', 900);
+  } catch (err) {
+    show(niceError(err), false);
+    $('regBtn').disabled = false; $('regBtn').textContent = 'Register';
+  }
+});
+</script>
+</body>
+</html>

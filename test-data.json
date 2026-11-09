@@ -1,0 +1,26 @@
+{
+  "smarthome": {
+    "live": {
+      "temperature": 23.4,
+      "humidity": 43,
+      "hot": true,
+      "gas": 1251,
+      "gasBaseline": 1313,
+      "gasThreshold": 1413,
+      "gasCalibrated": true,
+      "gasAlarm": false,
+      "warmLeft": 0,
+      "motion": true,
+      "holdLeft": 15,
+      "lastMotionAgo": 5,
+      "motionCount": 3,
+      "light": true,
+      "fan": true,
+      "uptime": 120
+    },
+    "controls": {
+      "lightMode": "auto",
+      "fanMode": "auto"
+    }
+  }
+}
